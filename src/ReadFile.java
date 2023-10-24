@@ -5,40 +5,43 @@ import java.io.IOException;
 public class ReadFile {
     public static void main(String[] args) {
         String path = "C:/Users/ARLebedev/Downloads/access.log";
-        int totalLines = 0;
-        int maxLength = 0;
-        int minLength = Integer.MAX_VALUE;
+        int googleBotCount = 0;
+        int yandexBotCount = 0;
+        int totalRequests = 0;
 
-        try (FileReader fileReader = new FileReader(path);
-             BufferedReader reader = new BufferedReader(fileReader)) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                int length = line.length();
-                totalLines++;
-                if (length > maxLength) {
-                    maxLength = length;
-                }
-                if (length < minLength) {
-                    minLength = length;
-                }
-                if (length > 1024) {
-                    throw new LineTooLongException("Строка длиннее 1024 символов: " + line);
+                totalRequests++;
+                String userAgent = extractUserAgent(line);
+                if (userAgent.contains("GoogleBot")) {
+                    googleBotCount++;
+                } else if (userAgent.contains("YandexBot")) {
+                    yandexBotCount++;
                 }
             }
         } catch (IOException e) {
             System.out.println("Ошибка при чтении файла: " + e.getMessage());
-        } catch (LineTooLongException e) {
-            System.out.println(e.getMessage());
         }
 
-        System.out.println("Общее количество строк в файле: " + totalLines);
-        System.out.println("Длина самой длинной строки в файле: " + maxLength);
-        System.out.println("Длина самой короткой строки в файле: " + minLength);
+        double googleBotPercentage = calculatePercentage(googleBotCount, totalRequests);
+        double yandexBotPercentage = calculatePercentage(yandexBotCount, totalRequests);
+
+        System.out.println("Доля запросов от GoogleBot: " + googleBotPercentage + "%");
+        System.out.println("Доля запросов от YandexBot: " + yandexBotPercentage + "%");
     }
 
-    static class LineTooLongException extends RuntimeException {
-        public LineTooLongException(String message) {
-            super(message);
+    private static String extractUserAgent(String line) {
+        String userAgent = "";
+        int start = line.indexOf("\"Mozilla");
+        int end = line.indexOf(")\"");
+        if (start >= 0 && end >= 0 && end >= start) {
+            userAgent = line.substring(start, end + 2);
         }
+        return userAgent;
+    }
+
+    private static double calculatePercentage(int count, int total) {
+        return (double) count / total * 100;
     }
 }
