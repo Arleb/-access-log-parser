@@ -12,6 +12,8 @@ public class LogEntry {
     private long dataSize;
     private String referer;
     private String userAgent;
+    private String pageAddress;
+    private String operatingSystem;
 
     public LogEntry(String logString) {
         try {
@@ -22,7 +24,6 @@ public class LogEntry {
 
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("[dd/MMM/yyyy:HH:mm:ss][dd/MM/yyyy:HH:mm:ss]", Locale.ENGLISH);
                 this.dateTime = LocalDateTime.parse(logParts[3].replaceAll("\\[|\\]", ""), formatter);
-
                 String[] requestParts = logParts[5].split("\"");
                 if (requestParts.length >= 3) {
                     this.requestMethod = requestParts[0];
@@ -34,11 +35,11 @@ public class LogEntry {
                 this.referer = logParts[10].replaceAll("\"", "");
                 this.userAgent = logParts[11].replaceAll("\"", "");
             } else {
-                throw new IllegalArgumentException("Invalid log entry format");
+                throw new IllegalArgumentException("Неправильный формат");
             }
 
         } catch (DateTimeParseException | NumberFormatException | ArrayIndexOutOfBoundsException e) {
-            throw new IllegalArgumentException("Invalid log entry format", e);
+            throw new IllegalArgumentException("Неправильный формат", e);
         }
     }
 
@@ -74,6 +75,22 @@ public class LogEntry {
         return userAgent;
     }
 
+    public String getPageAddress() {
+        return pageAddress;
+    }
+
+    public String getOperatingSystem() {
+        return operatingSystem;
+    }
+
+    public void setPageAddress(String pageAddress) {
+        this.pageAddress = pageAddress;
+    }
+
+    public void setOperatingSystem(String operatingSystem) {
+        this.operatingSystem = operatingSystem;
+    }
+
     @Override
     public String toString() {
         return "LogEntry{" +
@@ -85,6 +102,8 @@ public class LogEntry {
                 ", dataSize=" + dataSize +
                 ", referer='" + referer + '\'' +
                 ", userAgent='" + userAgent + '\'' +
+                ", pageAddress='" + pageAddress + '\'' +
+                ", operatingSystem='" + operatingSystem + '\'' +
                 '}';
     }
 }

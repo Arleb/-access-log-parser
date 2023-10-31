@@ -20,8 +20,8 @@ public class UserAgent {
             browserName = browserMatcher.group(1);
             browserVersion = browserMatcher.group(2);
         } else {
-            browserName = "Unknown";
-            browserVersion = "Unknown";
+            browserName = "Неизвестен";
+            browserVersion = "Неизвестен";
         }
 
         Pattern osPattern = Pattern.compile("(?i)(windows|mac|linux|android|ios)(?: (\\S+))?");
@@ -30,8 +30,8 @@ public class UserAgent {
             operatingSystem = osMatcher.group(1);
             operatingSystemVersion = osMatcher.group(2);
         } else {
-            operatingSystem = "Unknown";
-            operatingSystemVersion = "Unknown";
+            operatingSystem = "Неизвестен";
+            operatingSystemVersion = "Неизвестен";
         }
     }
 

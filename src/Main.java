@@ -2,24 +2,39 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class Main {
     public static void main(String[] args) {
         String filePath = "C:/Users/ARLebedev/Downloads/access.log";
         List<String> logFileData = readLogFile(filePath);
 
-        for (String logString : logFileData) {
-            UserAgent userAgent = new UserAgent(logString);
-            String browserName = userAgent.getBrowserName();
-            String browserVersion = userAgent.getBrowserVersion();
-            String operatingSystem = userAgent.getOperatingSystem();
-            String operatingSystemVersion = userAgent.getOperatingSystemVersion();
+        Statistics statistics = new Statistics();
 
-            System.out.println("Browser: " + browserName + " " + browserVersion);
-            System.out.println("OS: " + operatingSystem + " " + operatingSystemVersion);
-            System.out.println();
+        for (String logString : logFileData) {
+            LogEntry logEntry = new LogEntry(logString);
+            statistics.addEntry(logEntry);
         }
+
+        Set<String> uniquePages = statistics.getUniquePages();
+        System.out.println("Список уникальных страниц:");
+        for (String page : uniquePages) {
+            System.out.println(page);
+        }
+
+        Map<String, Double> operatingSystemStats = statistics.getOperatingSystemStatistics();
+        System.out.println("ОС:");
+        for (String os : operatingSystemStats.keySet()) {
+            double percentage = operatingSystemStats.get(os);
+            System.out.println(os + ": " + percentage);
+        }
+
+        double trafficRate = statistics.getTrafficRate();
+        System.out.println("Траффик: " + trafficRate);
     }
 
     private static List<String> readLogFile(String filePath) {
@@ -27,9 +42,13 @@ public class Main {
 
         try {
             Path path = Path.of(filePath);
-            logFileData = Files.readAllLines(path);
+            if (Files.exists(path)) {
+                logFileData = Files.readAllLines(path);
+            } else {
+                System.err.println("Лог файл не существует.");
+            }
         } catch (IOException e) {
-            System.err.println("Error reading log file: " + e.getMessage());
+            System.err.println("Ошибка чтения лог-файла: " + e.getMessage());
         }
 
         return logFileData;
