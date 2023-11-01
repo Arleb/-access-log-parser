@@ -10,6 +10,8 @@ public class Statistics {
     private LocalDateTime maxTime;
     private Set<String> uniquePages;
     private Map<String, Integer> operatingSystems;
+    private Set<String> nonExistingPages;
+    private Map<String, Integer> browserStats;
 
     public Statistics() {
         totalTraffic = 0;
@@ -17,6 +19,8 @@ public class Statistics {
         maxTime = LocalDateTime.MIN;
         uniquePages = new HashSet<>();
         operatingSystems = new HashMap<>();
+        nonExistingPages = new HashSet<>();
+        browserStats = new HashMap<>();
     }
 
     public void addEntry(LogEntry logEntry) {
@@ -32,13 +36,19 @@ public class Statistics {
 
         String requestPath = logEntry.getRequestPath();
         String operatingSystem = logEntry.getOperatingSystem();
+        String responseCode = logEntry.getResponseCode();
+        String browserName = logEntry.getBrowserName();
 
-        if (requestPath != null && logEntry.getResponseCode().equals("200")) {
-            uniquePages.add(requestPath);
+        if (requestPath != null && responseCode.equals("404")) {
+            nonExistingPages.add(requestPath);
         }
 
         if (operatingSystem != null) {
             operatingSystems.put(operatingSystem, operatingSystems.getOrDefault(operatingSystem, 0) + 1);
+        }
+
+        if (browserName != null) {
+            browserStats.put(browserName, browserStats.getOrDefault(browserName, 0) + 1);
         }
     }
 
@@ -54,6 +64,23 @@ public class Statistics {
         for (String os : operatingSystems.keySet()) {
             double percentage = (double) operatingSystems.get(os) / totalEntries;
             statistics.put(os, percentage);
+        }
+
+        return statistics;
+    }
+
+    public Set<String> getNonExistingPages() {
+        return nonExistingPages;
+    }
+
+    public Map<String, Double> getBrowserStatistics() {
+        Map<String, Double> statistics = new HashMap<>();
+
+        int totalEntries = browserStats.values().stream().mapToInt(Integer::intValue).sum();
+
+        for (String browser : browserStats.keySet()) {
+            double percentage = (double) browserStats.get(browser) / totalEntries;
+            statistics.put(browser, percentage);
         }
 
         return statistics;

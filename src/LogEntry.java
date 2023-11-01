@@ -14,6 +14,7 @@ public class LogEntry {
     private String userAgent;
     private String pageAddress;
     private String operatingSystem;
+    private String browserName;
 
     public LogEntry(String logString) {
         try {
@@ -35,11 +36,11 @@ public class LogEntry {
                 this.referer = logParts[10].replaceAll("\"", "");
                 this.userAgent = logParts[11].replaceAll("\"", "");
             } else {
-                throw new IllegalArgumentException("Неправильный формат");
+                throw new IllegalArgumentException("Invalid log entry format");
             }
 
         } catch (DateTimeParseException | NumberFormatException | ArrayIndexOutOfBoundsException e) {
-            throw new IllegalArgumentException("Неправильный формат", e);
+            throw new IllegalArgumentException("Invalid log entry format", e);
         }
     }
 
@@ -83,12 +84,20 @@ public class LogEntry {
         return operatingSystem;
     }
 
+    public String getBrowserName() {
+        return browserName;
+    }
+
     public void setPageAddress(String pageAddress) {
         this.pageAddress = pageAddress;
     }
 
     public void setOperatingSystem(String operatingSystem) {
         this.operatingSystem = operatingSystem;
+    }
+
+    public void setBrowserName(String browserName) {
+        this.browserName = browserName;
     }
 
     @Override
@@ -104,6 +113,7 @@ public class LogEntry {
                 ", userAgent='" + userAgent + '\'' +
                 ", pageAddress='" + pageAddress + '\'' +
                 ", operatingSystem='" + operatingSystem + '\'' +
+                ", browserName='" + browserName + '\'' +
                 '}';
     }
 }

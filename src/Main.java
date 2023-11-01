@@ -1,9 +1,6 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,7 +18,7 @@ public class Main {
         }
 
         Set<String> uniquePages = statistics.getUniquePages();
-        System.out.println("Список уникальных страниц:");
+        System.out.println("Список уникальные страницы:");
         for (String page : uniquePages) {
             System.out.println(page);
         }
@@ -33,22 +30,31 @@ public class Main {
             System.out.println(os + ": " + percentage);
         }
 
+        Set<String> nonExistingPages = statistics.getNonExistingPages();
+        System.out.println("Список несуществующих страниц:");
+        for (String page : nonExistingPages) {
+            System.out.println(page);
+        }
+
+        Map<String, Double> browserStats = statistics.getBrowserStatistics();
+        System.out.println("Статистика браузера:");
+        for (String browser : browserStats.keySet()) {
+            double percentage = browserStats.get(browser);
+            System.out.println(browser + ": " + percentage);
+        }
+
         double trafficRate = statistics.getTrafficRate();
         System.out.println("Траффик: " + trafficRate);
     }
 
     private static List<String> readLogFile(String filePath) {
-        List<String> logFileData = new ArrayList<>();
+        List<String> logFileData = null;
 
         try {
             Path path = Path.of(filePath);
-            if (Files.exists(path)) {
-                logFileData = Files.readAllLines(path);
-            } else {
-                System.err.println("Лог файл не существует.");
-            }
+            logFileData = Files.readAllLines(path);
         } catch (IOException e) {
-            System.err.println("Ошибка чтения лог-файла: " + e.getMessage());
+            System.err.println("Ошибка при чтении файла: " + e.getMessage());
         }
 
         return logFileData;
