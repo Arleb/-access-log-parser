@@ -7,10 +7,15 @@ public class UserAgent {
     private String browserVersion;
     private String operatingSystem;
     private String operatingSystemVersion;
+    private String referer;
+    private String userAgentString;
+
+    private static final String[] BOT_IDENTIFIERS = {"bot", "spider", "crawler"};
 
     public UserAgent(String userAgent) {
         this.userAgent = userAgent.trim();
         extractBrowserAndOperatingSystem();
+        extractReferer();
     }
 
     private void extractBrowserAndOperatingSystem() {
@@ -35,6 +40,16 @@ public class UserAgent {
         }
     }
 
+    private void extractReferer() {
+        Pattern refererPattern = Pattern.compile("(?i)Referer:\\s*(\\S+)");
+        Matcher refererMatcher = refererPattern.matcher(userAgent);
+        if (refererMatcher.find()) {
+            referer = refererMatcher.group(1);
+        } else {
+            referer = "Unknown";
+        }
+    }
+
     public String getBrowserName() {
         return browserName;
     }
@@ -49,5 +64,23 @@ public class UserAgent {
 
     public String getOperatingSystemVersion() {
         return operatingSystemVersion;
+    }
+
+    public String getReferer() {
+        return referer;
+    }
+
+    public String getUserAgentString() {
+        return userAgentString;
+    }
+
+    public boolean isBot() {
+        String lowerCaseUserAgent = userAgent.toLowerCase();
+        for (String identifier : BOT_IDENTIFIERS) {
+            if (lowerCaseUserAgent.contains(identifier)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

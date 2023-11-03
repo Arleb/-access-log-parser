@@ -1,6 +1,8 @@
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class LogEntry {
     private LocalDateTime dateTime;
@@ -16,7 +18,6 @@ public class LogEntry {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MMM/yyyy:HH:mm:ss", Locale.US);
         this.dateTime = LocalDateTime.parse(logParts[3].substring(1), formatter);
-
         this.ipAddress = logParts[0];
         this.requestMethod = logParts[5].replaceAll("\"", "");
         this.requestPath = logParts[6];
